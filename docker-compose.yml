@@ -1,0 +1,49 @@
+
+version: '2.2'
+
+networks:
+    monitor:
+        driver: bridge
+
+services:
+    prometheus:
+        image: prom/prometheus:latest
+        container_name: prometheus
+        hostname: prometheus
+        restart: always
+        volumes:
+            - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+        ports:
+            - "9090:9090"
+        networks:
+            - monitor
+
+    alertmanager:
+        image: prom/alertmanager:latest
+        container_name: alertmanager
+        hostname: alertmanager
+        restart: always
+        volumes:
+            - ./config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+        ports:
+            - "9093:9093"
+        networks:
+            - monitor
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        hostname: grafana
+        restart: always
+        ports:
+            - "3000:3000"
+        networks:
+            - monitor
+    web:
+        image: springboot/docker:v2
+        container_name: web_services
+        hostname: springboot
+        ports:
+            - "8080:8080"
+        networks:
+            - monitor
